@@ -312,19 +312,17 @@ PHP_FUNCTION(molten_get_traceid)
 /* {{{ molten_set_traceid */
 PHP_FUNCTION(molten_set_traceid)
 {
-    char *trace_id;    
-    int trace_id_len;
-    int result = zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &trace_id, &trace_id_len);
-    if (result  == SUCCESS) {
-        if (PTG(pct).pch.is_sampled == 1) {
-            efree(PTG(pct).pch.trace_id->val);
-            PTG(pct).pch.trace_id->val = estrndup(trace_id, trace_id_len);
-        } else {
-            RETURN_BOOL(IS_TRUE);
+        char *trace_id = NULL;
+        size_t trace_id_len, len;
+
+        if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &trace_id, &trace_id_len) == FAILURE) {
+                return;
         }
-    } else {
-        RETURN_BOOL(IS_FALSE);
-    }
+
+        efree(PTG(pct).pch.trace_id->val);
+        PTG(pct).pch.trace_id->val = estrndup(trace_id, trace_id_len);
+
+       /*  RETURN_STRING(PTG(pct).pch.trace_id->val); */
 }
 /* }}} */
 
